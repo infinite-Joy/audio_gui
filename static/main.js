@@ -24,6 +24,7 @@ var rafID = null;
 var analyserContext = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
+var text = null;
 
 
 function gotBuffers(buffers) {
@@ -32,9 +33,13 @@ function gotBuffers(buffers) {
 
 function doneEncoding(soundBlob) {
     // fetch('/audio', {method: "POST", body: soundBlob}).then(response => $('#output').text(response.text()))
-    fetch('/audio', {method: "POST", body: soundBlob}).then(response => response.text().then(text => {
+    fetch('/audio', {
+        method: "POST",
+        body: soundBlob
+    }).then(response => response.text().then(text => {
         document.getElementById('output').value = text;
     }));
+
     recIndex++;
 }
 
@@ -46,13 +51,16 @@ function stopRecording() {
     audioRecorder.getBuffers(gotBuffers);
 }
 
-function startRecording() {
+function startRecording(incoming_text) {
 
     // start recording
     if (!audioRecorder)
         return;
     document.getElementById('start').disabled = true;
     document.getElementById('stop').removeAttribute('disabled');
+    text = incoming_text.trim();
+    console.log('incoming text');
+    console.log(text);
     audioRecorder.clear();
     audioRecorder.record();
 }
